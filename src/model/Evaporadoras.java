@@ -37,12 +37,11 @@ public class Evaporadoras {
     public double getPreco() { return Preco; }
 
     private static final List<Evaporadoras> catalogo = Arrays.asList(
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
 
             new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
             new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
-
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
             new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
             new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
             new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),

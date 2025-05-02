@@ -1,19 +1,27 @@
 package ui;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import model.DadosCâmara;
 import model.Evaporadoras;
 import model.Item;
 import model.UnidadeCondensadoras;
+
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.Locale;
 
 public class PainelMaterialFX extends SplitPane {
 
@@ -22,11 +30,16 @@ public class PainelMaterialFX extends SplitPane {
     private TableView<Item> tabela;
     private Label lblCusto;
     private Label lblSugerido;
+    private ObservableList<Item> observableItensTabela = FXCollections.observableArrayList();
+    private double custoTotalObra;
+
+
 
     // === CONSTRUTOR ===
     public PainelMaterialFX() {
         // --- Tabela de materiais ---
         configurarTabelaMateriais();
+        tabela.setItems(observableItensTabela);
 
         // --- Painel lateral (Custo, Venda) ---
         VBox painelLateral = criarPainelLateral();
@@ -37,11 +50,18 @@ public class PainelMaterialFX extends SplitPane {
         // --- Montagem do SplitPane ---
         this.getItems().addAll(painelTabela, painelLateral);
         this.setDividerPositions(0.7);
+
     }
 
     // === MÉTODOS DE CONSTRUÇÃO DE UI ===
 
+    public void initialize() {
+        tabela.setItems(observableItensTabela);
+        // configure colunas normalmente
+    }
+
     private void configurarTabelaMateriais() {
+
         tabela = new TableView<>();
 
         TableColumn<Item, String> colunaNome = new TableColumn<>("Nome");
@@ -49,30 +69,61 @@ public class PainelMaterialFX extends SplitPane {
 
         TableColumn<Item, String> colunaModelo = new TableColumn<>("Modelo");
         colunaModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
-        colunaModelo.setPrefWidth(130);
+        colunaModelo.setPrefWidth(180);
+
+        TableColumn<Item, String> colunaUnidade = new TableColumn<>("Unidade");
+        colunaUnidade.setCellValueFactory(new PropertyValueFactory<>("unidade"));
+        colunaUnidade.setPrefWidth(68);
 
         TableColumn<Item, Integer> colunaQuantidade = new TableColumn<>("Quantidade");
         colunaQuantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        colunaQuantidade.setPrefWidth(88);
 
-        TableColumn<Item, Double> colunaValor = new TableColumn<>("Valor");
-        colunaValor.setCellValueFactory(new PropertyValueFactory<>("valor"));
-        colunaValor.setCellFactory(col -> new TableCell<Item, Double>() {
+        TableColumn<Item, Double> colunaValorUnitario = new TableColumn<>("Valor Unitário");
+        colunaValorUnitario.setCellValueFactory(new PropertyValueFactory<>("valor"));
+        colunaValorUnitario.setPrefWidth(110);
+        colunaValorUnitario.setCellFactory(col -> new TableCell<Item, Double>() {
             @Override
             protected void updateItem(Double valor, boolean empty) {
                 super.updateItem(valor, empty);
                 if (empty || valor == null) {
                     setText(null);
                 } else {
-                    setText(String.format("R$ %.2f", valor));
+                    setText(formatoBR.format(valor));
                 }
             }
         });
 
-        tabela.getColumns().addAll(colunaNome, colunaModelo, colunaQuantidade, colunaValor);
+        TableColumn<Item, Double> colunaValorTotal = new TableColumn<>("Valor Total");
+        colunaValorTotal.setPrefWidth(110);
+        colunaValorTotal.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().getQuantidade() * cellData.getValue().getValor())
+        );
+        colunaValorTotal.setCellFactory(col -> new TableCell<Item, Double>() {
+            @Override
+            protected void updateItem(Double valor, boolean empty) {
+                super.updateItem(valor, empty);
+                if (empty || valor == null) {
+                    setText(null);
+                } else {
+                    setText(formatoBR.format(valor));
+                }
+            }
+        });
+
+        tabela.getColumns().addAll(
+                colunaNome,
+                colunaModelo,
+                colunaUnidade,
+                colunaQuantidade,
+                colunaValorUnitario,
+                colunaValorTotal
+        );
     }
 
     private VBox criarPainelTabela() {
         // Barra de título com botão de esconder/exibir lista
+
         Label titulo = new Label("Lista de materiais");
         titulo.setFont(Font.font("System", FontWeight.BOLD, 14));
         Button btnToggle = new Button("▲");
@@ -109,7 +160,7 @@ public class PainelMaterialFX extends SplitPane {
         painelTabela.setPadding(new Insets(10,10,5,10));
         painelTabela.setSpacing(10);
         painelTabela.setStyle("""
-            -fx-background-color: white;
+            -fx-background-color: linear-gradient(from 0% 100% to 0% 0%, #e3f4ff, white);
             -fx-border-color: #cccccc;
             -fx-border-radius: 8;
             -fx-background-radius: 8;
@@ -121,7 +172,7 @@ public class PainelMaterialFX extends SplitPane {
         VBox painelLateral = new VBox(10);
         painelLateral.setPadding(new Insets(10));
         painelLateral.setStyle("""
-            -fx-background-color: #f9f9f9;
+            -fx-background-color: linear-gradient(from 0% 100% to 0% 0%, #e3f4ff, white);
             -fx-border-color: #cccccc;
             -fx-border-radius: 8;
             -fx-background-radius: 8;
@@ -129,11 +180,12 @@ public class PainelMaterialFX extends SplitPane {
 
         Label lblCustoTitulo = new Label("Custo da câmara");
         lblCustoTitulo.setFont(Font.font("System", FontWeight.BOLD, 13));
-        lblCusto = new Label("R$ 0.00");
+        lblCusto = new Label(formatoBR.format(0));
 
         Label lblSugeridoTitulo = new Label("Valor de venda sugerido");
         lblSugeridoTitulo.setFont(Font.font("System", FontWeight.BOLD, 13));
-        lblSugerido = new Label("R$ 0.00 (30% de margem)");
+        lblSugerido = new Label(formatoBR.format(0) + " (30% de margem)");
+
 
         Label lblVendaTitulo = new Label("Valor da venda");
         lblVendaTitulo.setFont(Font.font("System", FontWeight.BOLD, 13));
@@ -180,40 +232,44 @@ public class PainelMaterialFX extends SplitPane {
 
     // === LÓGICA DE NEGÓCIO / SUPORTE À UI ===
 
-    public void adicionarPainel(String local, String modelo, int quantidade, double valorIndividual) {
-        tabela.getItems().add(new Item(local, modelo, quantidade, valorIndividual * quantidade));
+    public void adicionarPainel(String local, String modelo, String unidade, int quantidade, double valorIndividual) {
+        observableItensTabela.add(new Item(local, modelo, unidade, quantidade, valorIndividual));
         atualizarCusto();
     }
 
     private double calcularCustoTotal() {
-        return tabela.getItems().stream().mapToDouble(Item::getValor).sum();
+        return observableItensTabela.stream()
+                .mapToDouble(item -> item.getValor() * item.getQuantidade())
+                .sum();
     }
 
     private void atualizarCusto() {
         double custoBase = calcularCustoTotal();
-        lblCusto.setText(String.format("R$ %.2f", custoBase));
+        lblCusto.setText(formatoBR.format(custoBase));
         double vendaSugerida = custoBase * 1.3;
-        lblSugerido.setText(String.format("R$ %.2f (30%% de margem)", vendaSugerida));
+        lblSugerido.setText(formatoBR.format(vendaSugerida) + " (30% de margem)");
     }
 
     public void adicionarRecomendadosNaTabela() {
-        tabela.getItems().removeIf(item ->
+        observableItensTabela.removeIf(item ->
                 item.getNome().equals("Motor") || item.getNome().equals("Evaporadora")
         );
         UnidadeCondensadoras motor = DadosCâmara.getMotorRecomendado();
         Evaporadoras evap = DadosCâmara.getEvaporadoraRecomendada();
 
         if (motor != null) {
-            tabela.getItems().add(new Item("Motor", motor.getModelo(), 1, motor.getPreco()));
+            observableItensTabela.add(new Item("Motor", motor.getModelo(), "un", 1, motor.getPreco()));
         }
         if (evap != null) {
-            tabela.getItems().add(new Item("Evaporadora", evap.getModelo(), 1, evap.getPreco()));
+            observableItensTabela.add(new Item("Evaporadora", evap.getModelo(), "un", 1, evap.getPreco()));
         }
         atualizarCusto();
     }
 
+    private static final NumberFormat formatoBR = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
     public void limparMateriaisPainel() {
-        tabela.getItems().removeIf(item ->
+        observableItensTabela.removeIf(item ->
                 item.getNome().equals("Painel Parede")
                         || item.getNome().equals("Painel Teto")
                         || item.getNome().equals("Painel Piso")
@@ -228,12 +284,13 @@ public class PainelMaterialFX extends SplitPane {
         Stage popup = new Stage();
         popup.setTitle("Itens Câmera Fria");
 
-        HBox conteudo = new HBox(10);
-        conteudo.setPadding(new Insets(15));
-        conteudo.setStyle("-fx-background-color: white;");
+        VBox container = new VBox(16);
+        container.setPadding(new Insets(15));
+        container.setStyle("-fx-background-color: white;");
 
         TableView<Item> tabelaEspelho = new TableView<>();
-        tabelaEspelho.setMinWidth(300);
+        tabelaEspelho.setEditable(true);
+        tabelaEspelho.setItems(observableItensTabela); // <- Use a MESMA lista!        tabelaEspelho.setMinWidth(300);
 
         TableColumn<Item, String> colunaNome = new TableColumn<>("Nome");
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
@@ -242,32 +299,32 @@ public class PainelMaterialFX extends SplitPane {
         colunaModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
 
         TableColumn<Item, Double> colunaValor = new TableColumn<>("Valor");
-        colunaValor.setCellValueFactory(new PropertyValueFactory<>("valor"));
-        colunaValor.setCellFactory(col -> new TableCell<Item, Double>() {
-            @Override
-            protected void updateItem(Double valor, boolean empty) {
-                super.updateItem(valor, empty);
-                if (empty || valor == null) setText(null);
-                else setText(String.format("R$ %.2f", valor));
-            }
+        colunaValor.setCellValueFactory(cellData -> cellData.getValue().valorProperty().asObject());
+        colunaValor.setCellFactory(TextFieldTableCell.<Item, Double>forTableColumn(new javafx.util.converter.DoubleStringConverter()));
+        colunaValor.setOnEditCommit(event -> {
+            event.getRowValue().setValor(event.getNewValue());
         });
 
         tabelaEspelho.getColumns().addAll(colunaNome, colunaModelo, colunaValor);
 
-        tabelaEspelho.getItems().addAll(tabela.getItems());
+        // Exemplo de preencher com alguns itens (troque pelo seu ObservableList):
+        // tabelaEspelho.setItems(listaItens);
 
-        VBox boxBotao = new VBox();
-        boxBotao.setAlignment(Pos.TOP_CENTER);
-        Button btnTrocaValores = new Button("Troca valores");
-        btnTrocaValores.setStyle("-fx-background-color: #FFB300; -fx-text-fill: #222;");
-        btnTrocaValores.setOnAction(ev -> {
-            new Alert(Alert.AlertType.INFORMATION, "Funcionalidade ainda não implementada!").showAndWait();
+        Button btnSalvar = new Button("Salvar Alterações");
+        btnSalvar.setStyle("-fx-background-color: #1976D2; -fx-text-fill: white;");
+        btnSalvar.setMaxWidth(Double.MAX_VALUE);
+
+        btnSalvar.setOnAction(e -> {
+            // Aqui você pode salvar ou atualizar os valores conforme sua lógica
+            for (Item item : tabelaEspelho.getItems()) {
+                System.out.println(item.getNome() + ": " + item.getValor());
+            }
+            popup.close();
         });
-        boxBotao.getChildren().add(btnTrocaValores);
 
-        conteudo.getChildren().addAll(tabelaEspelho, boxBotao);
+        container.getChildren().addAll(tabelaEspelho, btnSalvar);
 
-        Scene scene = new Scene(conteudo, 520, 300);
+        Scene scene = new Scene(container, 400, 400);
         popup.setScene(scene);
         popup.initModality(Modality.APPLICATION_MODAL);
         popup.showAndWait();
@@ -275,6 +332,8 @@ public class PainelMaterialFX extends SplitPane {
 
     // Janela de custos operacionais
     private void abrirJanelaCustos2() {
+
+        //this.custoTotalObra = total;
         Stage popup = new Stage();
         popup.setTitle("Custos Operacionais");
 
@@ -293,12 +352,27 @@ public class PainelMaterialFX extends SplitPane {
         btnSalvar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
         btnSalvar.setMaxWidth(Double.MAX_VALUE);
         btnSalvar.setOnAction(ev -> {
-            // Aqui você pode armazenar os dados em variáveis ou passar para outra classe
-            System.out.println("Tempo da obra: " + campoTempo.getText());
-            System.out.println("Custo equipe: " + campoEquipe.getText());
-            System.out.println("Bonificação: " + campoBonificacao.getText());
-            popup.close();
+            try {
+                int tempo = Integer.parseInt(campoTempo.getText().trim());
+                double custoEquipe = Double.parseDouble(campoEquipe.getText().replace(",", ".").trim());
+                double bonificacao = campoBonificacao.getText().isBlank() ? 0
+                        : Double.parseDouble(campoBonificacao.getText().replace(",", ".").trim());
+
+                double total = tempo * custoEquipe + bonificacao;
+
+                System.out.println("Tempo da obra: " + tempo);
+                System.out.println("Custo equipe: R$" + custoEquipe);
+                System.out.println("Bonificação: R$" + bonificacao);
+                System.out.println("Total final = R$" + total);
+
+                // Use a variável 'total' conforme sua aplicação (ex: atualize o valor da câmara)
+                popup.close();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Preencha os campos corretamente!", ButtonType.OK);
+                alert.showAndWait();
+            }
         });
+
 
         conteudo.getChildren().addAll(
                 new Label("Tempo da obra (dias)"), campoTempo,
@@ -314,29 +388,13 @@ public class PainelMaterialFX extends SplitPane {
     }
     public void adicionarItemPorta(String tipoPorta, int quantidade) {
         // Remove portas anteriores desse tipo para evitar duplicidade
-        tabela.getItems().removeIf(item -> item.getNome().equals("Porta") && item.getModelo().equals(tipoPorta));
+        observableItensTabela.removeIf(item -> item.getNome().equals("Porta") && item.getModelo().equals(tipoPorta));
 
         double valor = 2500.0; // Você pode mudar para um valor fixo de acordo com o tipo se quiser
-        tabela.getItems().add(new Item("Porta", tipoPorta, quantidade, valor));
+        observableItensTabela.add(new Item("Porta", tipoPorta, "un", quantidade, valor));
         atualizarCusto();
     }
-
-    // === CLASSE INTERNA ITEM ===
-    public static class Item {
-        private final String nome;
-        private final String modelo;
-        private final int quantidade;
-        private final double valor;
-
-        public Item(String nome, String modelo, int quantidade, double valor) {
-            this.nome = nome;
-            this.modelo = modelo;
-            this.quantidade = quantidade;
-            this.valor = valor;
-        }
-        public String getNome() { return nome; }
-        public String getModelo() { return modelo; }
-        public int getQuantidade() { return quantidade; }
-        public double getValor() { return valor; }
+    public void adicionarItensComplementares(List<Item> itensComplementares) {
+        observableItensTabela.addAll(itensComplementares);
     }
 }

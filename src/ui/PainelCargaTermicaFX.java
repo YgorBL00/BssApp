@@ -52,7 +52,7 @@ public class PainelCargaTermicaFX extends HBox {
     public PainelCargaTermicaFX() {
         setSpacing(18);
         setPadding(new Insets(18));
-        setStyle("-fx-background-color: #f7f7fc;");
+        setStyle("-fx-background-color: linear-gradient(from 0% 100% to 0% 0%, #e3f4ff, white);");
 
         inicializarProdutosPorTipo();
 
@@ -197,7 +197,6 @@ public class PainelCargaTermicaFX extends HBox {
             mostrarResultado(motor, evap);
 
 
-
             if (painelMaterialFX != null) {
                 // Adicionar porta, se tipo e batentes preenchidos:
                 if (cbTipoPorta.getValue() != null && cbBatentesPorta.getValue() != null) {
@@ -206,6 +205,9 @@ public class PainelCargaTermicaFX extends HBox {
                     painelMaterialFX.adicionarItemPorta(modeloPorta, quantidade);
                 }
                 painelMaterialFX.adicionarRecomendadosNaTabela();
+
+                List<Item> itensComplementares = RecomendacaoItensComplementares.recomendar();
+                painelMaterialFX.adicionarItensComplementares(itensComplementares);
             }
         } catch (Exception e) {
             mostrarErro("Preencha corretamente os campos necessários.");

@@ -41,6 +41,9 @@ public class PainelCalculoPaineisFX extends VBox {
         setSpacing(0);
         setPadding(new Insets(18, 16, 12, 16));
 
+        setStyle("-fx-background-color: linear-gradient(from 0% 100% to 0% 0%, #e3f4ff, white);");
+
+
         HBox linha = new HBox(30);
         linha.setAlignment(Pos.TOP_LEFT);
 
@@ -196,13 +199,13 @@ public class PainelCalculoPaineisFX extends VBox {
             String espessuraModelo = (int) espessura + " mm"; // ou use format/parseString se preferir
 
             double valorUnitario = valorPainelPorEspessura(espessura);
-// Paredes
-            painelMaterialFX.adicionarPainel("Painel Parede",espessuraModelo, qtdPainelParedes, valorUnitario);
-// Teto
-            painelMaterialFX.adicionarPainel("Painel Teto",espessuraModelo, qtdPainelTeto, valorUnitario);
-// Piso (se houver)
+            // Paredes
+            painelMaterialFX.adicionarPainel("Painel Parede",espessuraModelo,"m²", qtdPainelParedes, valorUnitario);
+            // Teto
+            painelMaterialFX.adicionarPainel("Painel Teto",espessuraModelo,"m²", qtdPainelTeto, valorUnitario);
+            // Piso (se houver)
             if (temPiso) {
-                painelMaterialFX.adicionarPainel("Painel Piso",espessuraModelo, qtdPainelPiso, valorUnitario);
+                painelMaterialFX.adicionarPainel("Painel Piso",espessuraModelo,"m²", qtdPainelPiso, valorUnitario);
             }
 
         } catch (Exception e) {

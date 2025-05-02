@@ -16,31 +16,31 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import ui.JanelaAbasManualFX;
 
 public class PainelBemVindo extends BorderPane {
 
     public PainelBemVindo(Stage stage) {
-        setStyle("-fx-background-color: white;");
-
+        setStyle("-fx-background-color: linear-gradient(from 0% 100% to 0% 0%, #b3e0ff, white);");
         // Topo: LOGO CENTRALIZADO
         VBox topo = new VBox();
         topo.setAlignment(Pos.CENTER);
 
         ImageView logo = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
         logo.setPreserveRatio(true);
-        logo.setFitHeight(130);
+        logo.setFitHeight(80);
         topo.getChildren().add(logo);
         topo.setPrefHeight(160);
         setTop(topo);
 
         // Centro: MENSAGEM + BOTÃO
         Label mensagem = new Label("Novo Projeto");
-        mensagem.setFont(Font.font("SansSerif", 38));
+        mensagem.setFont(Font.font("SansSerif", 27));
         mensagem.setTextFill(Color.web("#23336f"));
         mensagem.setOpacity(0);
 
         Button iniciar = new Button("Iniciar");
-        iniciar.setFont(Font.font("SansSerif", 20));
+        iniciar.setFont(Font.font("SansSerif", 17));
         iniciar.setStyle("-fx-background-color: #245edb; -fx-text-fill: white; -fx-background-radius: 24;");
         iniciar.setPrefWidth(170);
         iniciar.setOpacity(0);
@@ -52,7 +52,7 @@ public class PainelBemVindo extends BorderPane {
 
         // RODAPÉ: LINK
         Label linkManual = new Label("Adicionar dados manualmente");
-        linkManual.setFont(Font.font("SansSerif", 15));
+        linkManual.setFont(Font.font("SansSerif", 12));
         linkManual.setTextFill(Color.web("#2a7fd1"));
         linkManual.setUnderline(true);
         linkManual.setOpacity(0);

@@ -36,4 +36,9 @@ public class DadosCâmara {
 
     public static Evaporadoras getEvaporadoraRecomendada() { return evaporadoraRecomendada; }
     public static void setEvaporadoraRecomendada(Evaporadoras evap) { evaporadoraRecomendada = evap; }
+
+    private static double custoObra = 0.0;
+
+    public static void setCustoObra(double valor) { custoObra = valor; }
+    public static double getCustoObra() { return custoObra; }
 }
