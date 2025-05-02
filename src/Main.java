@@ -17,3 +17,9 @@ public class Main extends Application {
         launch();
     }
 }
+/* COISA A Fazer
+1. Conseguir Trocar os valores pelo botao
+2. Somar os Valores que nao ta somando
+3. fazer o custo operacional ir no custo da camara
+4. colocar um opçao de nova atualização
+ */
