@@ -3,11 +3,12 @@ package ui;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import model.LinhaTabelaPainel;
-
-import static model.DadosCâmara.*;
 
 public class PainelCalculoPaineisFX extends VBox {
 
@@ -19,13 +20,24 @@ public class PainelCalculoPaineisFX extends VBox {
     private final TextField tfLarguraPainel = novoCampo();
     private final RadioButton rbPisoSim = new RadioButton("Sim");
     private final RadioButton rbPisoNao = new RadioButton("Não");
+    private final PainelMaterialFX painelMaterialFX;
+
 
     // Tabela e totais
     private final TableView<LinhaTabelaPainel> tabela = new TableView<>();
     private final Label lbTotalPaineis = new Label("Total painéis: -");
     private final Label lbTotalM2 = new Label("Total m²: -");
 
-    public PainelCalculoPaineisFX() {
+    private double valorPainelPorEspessura(double espessura) {
+        if (espessura == 50) return 150.00; // Exemplo: 50mm custa R$150 cada painel
+        if (espessura == 70) return 175.00; // Exemplo: 70mm custa R$175 cada painel
+        if (espessura == 100) return  200.00;
+        if (espessura == 150) return  300.00;
+        return 200.00; // Default se for outro valor, pode personalizar conforme necessário
+    }
+
+    public PainelCalculoPaineisFX(PainelMaterialFX painelMaterialFX) {
+        this.painelMaterialFX = painelMaterialFX;
         setSpacing(0);
         setPadding(new Insets(18, 16, 12, 16));
 
@@ -119,6 +131,9 @@ public class PainelCalculoPaineisFX extends VBox {
 
     private void calcularPaineis() {
         try {
+            if (painelMaterialFX != null) {
+                painelMaterialFX.limparMateriaisPainel();
+            }
             // Salva os dados em DadosCâmara ao calcular painéis:
             double espessura = Double.parseDouble(tfEspessura.getText().replace(",", ".").trim());
             double largura = Double.parseDouble(tfLargura.getText().replace(",", ".").trim());
@@ -178,12 +193,25 @@ public class PainelCalculoPaineisFX extends VBox {
 
             lbTotalPaineis.setText("Total painéis: " + qtdTotal);
             lbTotalM2.setText("Total m²: " + format(areaTotal));
+            String espessuraModelo = (int) espessura + " mm"; // ou use format/parseString se preferir
+
+            double valorUnitario = valorPainelPorEspessura(espessura);
+// Paredes
+            painelMaterialFX.adicionarPainel("Painel Parede",espessuraModelo, qtdPainelParedes, valorUnitario);
+// Teto
+            painelMaterialFX.adicionarPainel("Painel Teto",espessuraModelo, qtdPainelTeto, valorUnitario);
+// Piso (se houver)
+            if (temPiso) {
+                painelMaterialFX.adicionarPainel("Painel Piso",espessuraModelo, qtdPainelPiso, valorUnitario);
+            }
 
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Preencha todos os campos corretamente.", ButtonType.OK);
             alert.showAndWait();
         }
     }
+
+
 
     private static String format(double valor) {
         return String.format("%.2f", valor).replace('.', ',');

@@ -11,10 +11,11 @@ public class Evaporadoras {
     private double temperaturaMax;
     private String gas;
     private String tensao;
-    private String hp; // se quiser usar também
+    private int hp; // se quiser usar também
+    private double Preco;
 
     public Evaporadoras(String marca, String modelo, double capacidadeKcal,
-                        double temperaturaMin, double temperaturaMax, String gas, String tensao, String hp) {
+                        double temperaturaMin, double temperaturaMax, String gas, String tensao, int hp, double preco) {
         this.marca = marca;
         this.modelo = modelo;
         this.capacidadeKcal = capacidadeKcal;
@@ -23,6 +24,7 @@ public class Evaporadoras {
         this.gas = gas;
         this.tensao = tensao;
         this.hp = hp;
+        this.Preco = preco;
     }
 
     public String getModelo() { return modelo; }
@@ -31,116 +33,70 @@ public class Evaporadoras {
     public double getTemperaturaMax() { return temperaturaMax; }
     public String getGas() { return gas; }
     public String getTensao() { return tensao; }
-    public String getHp() { return hp; }
+    public int getHp() { return hp; }
+    public double getPreco() { return Preco; }
 
     private static final List<Evaporadoras> catalogo = Arrays.asList(
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
 
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
 
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
 
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
 
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", "2.0"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5"),
-            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R404A", "220V", "2.0"),
-            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R404A", "220V", "1.5")
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 10000, -25, 5, "R22", "220V", 1,1),
+            new Evaporadoras("MIPAL", "HD400", 12000, -20, 5, "R22", "220V", 1,1)
 
             // adicione o restante
     );
