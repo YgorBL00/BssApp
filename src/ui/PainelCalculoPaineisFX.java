@@ -29,11 +29,11 @@ public class PainelCalculoPaineisFX extends VBox {
     private final Label lbTotalM2 = new Label("Total m²: -");
 
     private double valorPainelPorEspessura(double espessura) {
-        if (espessura == 50) return 150.00; // Exemplo: 50mm custa R$150 cada painel
-        if (espessura == 70) return 175.00; // Exemplo: 70mm custa R$175 cada painel
-        if (espessura == 100) return  200.00;
-        if (espessura == 150) return  300.00;
-        return 200.00; // Default se for outro valor, pode personalizar conforme necessário
+        if (espessura == 50) return 600.00; // Exemplo: 50mm custa R$150 cada painel
+        if (espessura == 70) return 650.00; // Exemplo: 70mm custa R$175 cada painel
+        if (espessura == 100) return  700.00;
+        if (espessura == 150) return  750.00;
+        return 1000.00; // Default se for outro valor, pode personalizar conforme necessário
     }
 
     public PainelCalculoPaineisFX(PainelMaterialFX painelMaterialFX) {

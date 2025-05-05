@@ -86,7 +86,6 @@ public class PainelCargaTermicaFX extends HBox {
                 linha("Altura (m):", lbAltura),
                 linha("Espessura (mm):", lbEspessura)
         );
-        painelDimensao.setStyle("-fx-background-color: #ffffff; -fx-border-color: #ececec; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;");
 
         cbIsolamento.getItems().addAll("PIR", "PUR", "EPS");
         cbIsolamento.setValue("PIR");
@@ -95,12 +94,19 @@ public class PainelCargaTermicaFX extends HBox {
         tfCondutividade.setEditable(false);
         tfCondutividade.setFocusTraversable(false);
 
+        // Monta a linha com o label alinhado à direita
+        HBox linhaCondutividade = new HBox(10);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Label labelCond = new Label("Condutividade (λ):");
+        linhaCondutividade.getChildren().addAll(spacer, labelCond, tfCondutividade);
+        linhaCondutividade.setAlignment(Pos.CENTER_RIGHT);
+
         VBox painelIsolamento = new VBox(7,
                 titulo("Isolamento"),
                 new HBox(10, new Label("Tipo:"), cbIsolamento),
-                new HBox(10, new Label("Condutividade (λ):"), tfCondutividade)
+                linhaCondutividade
         );
-        painelIsolamento.setStyle("-fx-background-color: #fffefe; -fx-border-color: #ececec; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;");
 
         Region espaco = new Region();
         VBox.setVgrow(espaco, Priority.ALWAYS);
@@ -186,28 +192,30 @@ public class PainelCargaTermicaFX extends HBox {
             double tempDesejada = Double.parseDouble(tfTempDesejada.getText());
             double cargaTermica = Double.parseDouble(tfCargaTermica.getText());
 
+            // PRIMEIRO - salva nos dados globais
+            DadosCâmara.setTemperaturaInterna(tempDesejada);
+            DadosCâmara.setCargaTermica(cargaTermica);
+
+            // DEPOIS - recomenda com os dados atualizados
             UnidadeCondensadoras motor = RecomendacaoMotor.recomendarMotor(tempDesejada, cargaTermica).get();
             Evaporadoras evap = RecomendacaoEvaporadora.recomendarEvaporadoras(tempDesejada, cargaTermica).get(0);
 
-            DadosCâmara.setTemperaturaInterna(tempDesejada);
-            DadosCâmara.setCargaTermica(cargaTermica);
+            // Salva também recomendados para uso posterior
             DadosCâmara.setMotorRecomendado(motor);
             DadosCâmara.setEvaporadoraRecomendada(evap);
 
             mostrarResultado(motor, evap);
 
-
             if (painelMaterialFX != null) {
-                // Adicionar porta, se tipo e batentes preenchidos:
+                // Adicionar porta, recomendados, complementares
                 if (cbTipoPorta.getValue() != null && cbBatentesPorta.getValue() != null) {
                     String modeloPorta = cbTipoPorta.getValue() + " (" + cbBatentesPorta.getValue() + " batentes)";
-                    int quantidade = 1; // cada porta pode ser uma linha só, se for sempre uma porta por vez
+                    int quantidade = 1;
                     painelMaterialFX.adicionarItemPorta(modeloPorta, quantidade);
                 }
                 painelMaterialFX.adicionarRecomendadosNaTabela();
 
-                List<Item> itensComplementares = RecomendacaoItensComplementares.recomendar();
-                painelMaterialFX.adicionarItensComplementares(itensComplementares);
+
             }
         } catch (Exception e) {
             mostrarErro("Preencha corretamente os campos necessários.");

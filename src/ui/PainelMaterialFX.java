@@ -14,10 +14,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.DadosCâmara;
-import model.Evaporadoras;
-import model.Item;
-import model.UnidadeCondensadoras;
+import model.*;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -32,6 +29,10 @@ public class PainelMaterialFX extends SplitPane {
     private Label lblSugerido;
     private ObservableList<Item> observableItensTabela = FXCollections.observableArrayList();
     private double custoTotalObra;
+    private double custoOperacional = 0.0;
+    private int tempoObra = 0;
+    private double custoEquipeObra = 0.0;
+    private double bonificacaoObra = 0.0;
 
 
 
@@ -123,7 +124,6 @@ public class PainelMaterialFX extends SplitPane {
 
     private VBox criarPainelTabela() {
         // Barra de título com botão de esconder/exibir lista
-
         Label titulo = new Label("Lista de materiais");
         titulo.setFont(Font.font("System", FontWeight.BOLD, 14));
         Button btnToggle = new Button("▲");
@@ -146,27 +146,85 @@ public class PainelMaterialFX extends SplitPane {
         scrollPane.setFitToHeight(true);
         scrollPane.setStyle("-fx-background-color: transparent;");
 
-        // Rodapé com botão "Valores"
+        // --- Rodapé com botão "Gerar Lista" à esquerda e "Valores" à direita ---
+        Button btnGerarLista = new Button("Gerar Lista");
+        btnGerarLista.setStyle("-fx-background-color: #1976D2; -fx-text-fill: white;");
+        btnGerarLista.setPadding(new Insets(6, 12, 6, 12));
+        btnGerarLista.setOnAction(e -> gerarListaMateriais());
+
+        Button btnApagarLista = new Button("X");
+        btnApagarLista.setStyle("-fx-background-color: #d32f2f; -fx-text-fill: white;");
+        btnApagarLista.setPadding(new Insets(6, 12, 6, 12));
+        btnApagarLista.setOnAction(e -> apagarListaMateriais());
+
         Button btnValores = new Button("Valores");
         btnValores.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
         btnValores.setPadding(new Insets(6,12,6,12));
         btnValores.setOnAction(e -> abrirJanelaItens1());
 
-        HBox rodape = new HBox(new Region(), btnValores);
-        HBox.setHgrow(rodape.getChildren().get(0), Priority.ALWAYS);
+        // Espaço fixo entre os botões (ex: 10 pixels)
+        Region espacinho = new Region();
+        espacinho.setPrefWidth(10);
+
+        HBox rodape = new HBox();
         rodape.setPadding(new Insets(0,0,0,0));
+        rodape.setAlignment(Pos.CENTER);
+
+// Ordem: [Gerar Lista] [espacinho] [Apagar Lista] [Region expansível] [Valores]
+        rodape.getChildren().addAll(btnGerarLista, espacinho, btnApagarLista, new Region(), btnValores);
+
+// Faça o último Region expandir para empurrar o botão Valores à direita
+        HBox.setHgrow(rodape.getChildren().get(3), Priority.ALWAYS);
 
         VBox painelTabela = new VBox(barraTopo, scrollPane, rodape);
         painelTabela.setPadding(new Insets(10,10,5,10));
         painelTabela.setSpacing(10);
         painelTabela.setStyle("""
-            -fx-background-color: linear-gradient(from 0% 100% to 0% 0%, #e3f4ff, white);
-            -fx-border-color: #cccccc;
-            -fx-border-radius: 8;
-            -fx-background-radius: 8;
-        """);
+        -fx-background-color: linear-gradient(from 0% 100% to 0% 0%, #e3f4ff, white);
+        -fx-border-color: #cccccc;
+        -fx-border-radius: 8;
+        -fx-background-radius: 8;
+    """);
         return painelTabela;
     }
+
+    private void apagarListaMateriais() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmação");
+        alert.setHeaderText(null);
+        alert.setContentText("Deseja realmente apagar todos os itens da lista?");
+        ButtonType ok = new ButtonType("Sim");
+        ButtonType cancel = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(ok, cancel);
+
+        alert.showAndWait().ifPresent(resposta -> {
+            if (resposta == ok) {
+                observableItensTabela.clear();
+                atualizarCusto();
+            }
+        });
+    }
+
+    private void gerarListaMateriais() {
+        // Gera e adiciona os itens complementares
+        List<Item> itensComplementares = RecomendacaoItensComplementares.recomendar();
+        adicionarItensComplementares(itensComplementares);
+
+        atualizarCusto();
+
+        // Opcional: mostrar para o usuário (como no exemplo anterior)
+        System.out.println("Itens complementares adicionados!");
+        for (Item item : itensComplementares) {
+            System.out.println(item.getNome() + " - " + item.getModelo() + " - " + item.getUnidade() +
+                    " - " + item.getQuantidade() + " x " + formatoBR.format(item.getValor()) +
+                    " = " + formatoBR.format(item.getQuantidade() * item.getValor()));
+        }
+        System.out.println("Lista completa agora tem:");
+        for (Item item : observableItensTabela) {
+            System.out.println(item.getNome() + " - " + item.getModelo());
+        }
+    }
+
 
     private VBox criarPainelLateral() {
         VBox painelLateral = new VBox(10);
@@ -179,16 +237,16 @@ public class PainelMaterialFX extends SplitPane {
         """);
 
         Label lblCustoTitulo = new Label("Custo da câmara");
-        lblCustoTitulo.setFont(Font.font("System", FontWeight.BOLD, 13));
+        lblCustoTitulo.setFont(Font.font("System", FontWeight.BOLD, 15));
         lblCusto = new Label(formatoBR.format(0));
 
         Label lblSugeridoTitulo = new Label("Valor de venda sugerido");
-        lblSugeridoTitulo.setFont(Font.font("System", FontWeight.BOLD, 13));
+        lblSugeridoTitulo.setFont(Font.font("System", FontWeight.BOLD, 15));
         lblSugerido = new Label(formatoBR.format(0) + " (30% de margem)");
 
 
         Label lblVendaTitulo = new Label("Valor da venda");
-        lblVendaTitulo.setFont(Font.font("System", FontWeight.BOLD, 13));
+        lblVendaTitulo.setFont(Font.font("System", FontWeight.BOLD, 15));
         TextField campoVenda = new TextField();
         campoVenda.setPromptText("Digite o valor de venda");
 
@@ -238,9 +296,10 @@ public class PainelMaterialFX extends SplitPane {
     }
 
     private double calcularCustoTotal() {
-        return observableItensTabela.stream()
+        double custoMateriais = observableItensTabela.stream()
                 .mapToDouble(item -> item.getValor() * item.getQuantidade())
                 .sum();
+        return custoMateriais + custoOperacional; // soma custo operacional
     }
 
     private void atualizarCusto() {
@@ -248,6 +307,11 @@ public class PainelMaterialFX extends SplitPane {
         lblCusto.setText(formatoBR.format(custoBase));
         double vendaSugerida = custoBase * 1.3;
         lblSugerido.setText(formatoBR.format(vendaSugerida) + " (30% de margem)");
+        System.out.println("====== ITENS NA TABELA ======");
+        for(Item item : observableItensTabela) {
+            System.out.println(item.getNome() + " - " + item.getModelo() + " - " + item.getQuantidade() + " x " + item.getValor());
+        }
+        System.out.println("=============================");
     }
 
     public void adicionarRecomendadosNaTabela() {
@@ -343,10 +407,15 @@ public class PainelMaterialFX extends SplitPane {
 
         TextField campoTempo = new TextField();
         campoTempo.setPromptText("Tempo da obra (dias)");
+        if (tempoObra > 0) campoTempo.setText(String.valueOf(tempoObra));
+
         TextField campoEquipe = new TextField();
         campoEquipe.setPromptText("Custo da equipe (R$)");
+        if (custoEquipeObra > 0) campoEquipe.setText(String.valueOf(custoEquipeObra));
+
         TextField campoBonificacao = new TextField();
         campoBonificacao.setPromptText("Bonificação (R$)");
+        if (bonificacaoObra > 0) campoBonificacao.setText(String.valueOf(bonificacaoObra));
 
         Button btnSalvar = new Button("Salvar");
         btnSalvar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
@@ -360,12 +429,16 @@ public class PainelMaterialFX extends SplitPane {
 
                 double total = tempo * custoEquipe + bonificacao;
 
-                System.out.println("Tempo da obra: " + tempo);
-                System.out.println("Custo equipe: R$" + custoEquipe);
-                System.out.println("Bonificação: R$" + bonificacao);
-                System.out.println("Total final = R$" + total);
+                // Salvar no campo de custo operacional
+                custoOperacional = total;
+                // ... dentro do try, antes ou depois do cálculo total
+                tempoObra = tempo;
+                custoEquipeObra = custoEquipe;
+                bonificacaoObra = bonificacao;
 
-                // Use a variável 'total' conforme sua aplicação (ex: atualize o valor da câmara)
+                // Atualizar os valores de custo na interface principal
+                atualizarCusto();
+
                 popup.close();
             } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Preencha os campos corretamente!", ButtonType.OK);
